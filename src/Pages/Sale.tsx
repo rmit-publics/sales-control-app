@@ -3,15 +3,13 @@ import { useContext, useState, useEffect } from "react";
 
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import { AppContext } from "../context/AppContext";
-import SaleInterface from '../interfaces/SaleInterface';
-import { GetDB, InitDB } from '../service/DbLocalService';
+import { GetByIdDB, InitDB } from '../service/DbLocalService';
 
 export default function Sale({route}) {
   const { id, pending } = route.params
   const { getSale } = useContext(AppContext)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [sale, setSale] = useState(null);
 
   const [product, setProduct] = useState("");
   const [value, setValue] = useState("");
@@ -23,19 +21,12 @@ export default function Sale({route}) {
   useEffect(() => {
     const dataPending = async() => {
       db = await InitDB();
-      const salesDB = await GetDB(db);
+      const salesDB = await GetByIdDB(id, db);
       if(salesDB) {
-        const parseSales = salesDB.map((sale) => {
-          const item = {
-            id: sale.id,
-            product: sale.product,
-            roming: false,
-            syncronized: false
-
-          } as SaleInterface
-          return item
-        })
-        setSale(parseSales)
+        setProduct(salesDB[0].product)
+        setDate(salesDB[0].date)
+        setTime(salesDB[0].time)
+        setValue(salesDB[0].amount+'')
       }
     }
 
@@ -45,7 +36,7 @@ export default function Sale({route}) {
         setProduct(sale.product)
         setDate(sale.date)
         setTime(sale.time)
-        setValue(sale.amount)
+        setValue(sale.amount+'')
       }
     }
 

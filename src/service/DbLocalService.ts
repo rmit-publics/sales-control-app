@@ -50,3 +50,19 @@ export async function GetDB(db: SQLite.Database) : Promise<any> {
   })
   return data
 }
+
+export async function GetByIdDB(id: number, db: SQLite.Database) : Promise<any> {
+
+  let data = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM sales WHERE id = ?', [id],
+        (txObj, { rows: { _array } }) =>
+          {
+            resolve(_array)
+          }
+        ),
+        (txObj, error) =>  reject(console.log('Error', error))
+    })
+  })
+  return data
+}

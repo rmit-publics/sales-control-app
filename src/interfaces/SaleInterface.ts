@@ -3,7 +3,7 @@ export default interface SaleInterface {
   product: string,
   date: string,
   time: string,
-  amount: string,
+  amount: number,
   syncronized: boolean,
   roming: boolean
 }
