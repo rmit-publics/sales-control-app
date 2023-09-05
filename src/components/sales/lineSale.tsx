@@ -56,6 +56,6 @@ const styles = StyleSheet.create({
     width: 90
   },
   pending:{
-    backgroundColor: 'yellow'
+    backgroundColor: '#FF9966'
   }
 })

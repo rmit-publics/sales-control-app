@@ -5,5 +5,6 @@ export default interface SaleInterface {
   time: string,
   amount: number,
   syncronized: boolean,
-  roming: boolean
+  roming: boolean,
+  created_at: string
 }

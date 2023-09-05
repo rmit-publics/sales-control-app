@@ -15,6 +15,7 @@ export default function Sale({route}) {
   const [value, setValue] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [cretead, setCreated] = useState("");
 
   let db
 
@@ -37,6 +38,7 @@ export default function Sale({route}) {
         setDate(sale.date)
         setTime(sale.time)
         setValue(sale.amount+'')
+        setCreated(sale.created_at)
       }
     }
 
@@ -73,8 +75,20 @@ export default function Sale({route}) {
           <Text style={styles.text}>Hora</Text>
           <TextInput style={styles.input} value={time} onChangeText={(time) => setTime(time)}/>
         </View>
+        {pending &&
+          <View>
+            <Text style={styles.pending}>Venda pendente de sincronização</Text>
+          </View>
+        }
+        {!pending &&
+          <View>
+            <Text style={styles.sync}>Venda sincronizada em {cretead} </Text>
+          </View>
+        }
         <View style={styles.button}>
-          <Button onPress={save} title="Salvar" />
+          {!id &&
+            <Button onPress={save} title="Salvar" />
+          }
         </View>
       </View>
     </View>
@@ -102,6 +116,26 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10
+  },
+  pending:{
+    fontWeight: 'bold',
+    fontSize: 16,
+    padding: 10,
+    textAlign: 'center',
+    backgroundColor: '#FF9966',
+    marginTop: 10,
+    borderRadius:10,
+    color: '#333'
+  },
+  sync:{
+    fontWeight: 'bold',
+    fontSize: 16,
+    padding: 10,
+    textAlign: 'center',
+    backgroundColor: '#99CC33',
+    marginTop: 10,
+    borderRadius:10,
+    color: '#333'
   }
 
 })
