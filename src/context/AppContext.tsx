@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useEffect, useState } from 'react'
+import { ReactNode, createContext, useState } from 'react'
 import SaleInterface from '../interfaces/SaleInterface';
 import LoginInterface from '../interfaces/LoginInterface';
 import UserInterface from '../interfaces/UserInterface';
@@ -14,7 +14,7 @@ type AppContextType = {
   getSales: () => Promise <SaleInterface[]>
 }
 
-const urlApi = 'https://d1d1-187-94-15-254.ngrok.io/api'
+const urlApi = 'https://b454-187-94-15-254.ngrok.io/api'
 
 export const AppContext = createContext<AppContextType>(null);
 
@@ -129,8 +129,12 @@ export const AppContextProvider = ( { children } : AppContextProps) => {
       body: formData,
     })
     .then(response =>{
-      console.log(response)
-      response.json()
+      console.log('response', response)
+      if(response.status === 200) {
+        response.json()
+      } else {
+        return false
+      }
     })
     .then(json => {
       console.log(json)
@@ -138,7 +142,7 @@ export const AppContextProvider = ( { children } : AppContextProps) => {
     })
     .catch(error => {
       console.error(error);
-      return
+      return false
     });
 
     return data

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
 import { Button, Image, RootTagContext, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ListSales from '../components/sales/listSales';
 import SaleInterface from '../interfaces/SaleInterface';
@@ -11,40 +12,48 @@ export default function Sales({navigation}) {
   const [sales, setSales] = useState<SaleInterface[]>([])
   const [localSales, setLocalSales] = useState<SaleInterface[]>([])
   let db
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData()
+      return () => null;
+    }, [])
+  );
+
   useEffect(() => {
-    const data = async() => {
-      db = await InitDB();
-      const salesDB = await GetDB(db);
-      if(salesDB) {
-        const parseSales = salesDB.map((sale) => {
-          const item = {
-            id: sale.id,
-            product: sale.product,
-            roming: false,
-            syncronized: false
-
-          } as SaleInterface
-          return item
-        })
-        setLocalSales(parseSales)
-
-        const oldSales = await getSales()
-
-        const parseOldSales = oldSales.map((sale) => {
-          const item = {
-            id: sale.id,
-            product: sale.product,
-            roming: sale.roming,
-            syncronized: true
-
-          } as SaleInterface
-          return item
-        })
-        setSales(parseOldSales)
-      }
-    }
-    data()
+    loadData()
   },[])
+
+  const loadData = async() => {
+    db = await InitDB();
+    const salesDB = await GetDB(db);
+    if(salesDB) {
+      const parseSales = salesDB.map((sale) => {
+        const item = {
+          id: sale.id,
+          product: sale.product,
+          roming: false,
+          syncronized: false
+
+        } as SaleInterface
+        return item
+      })
+      setLocalSales(parseSales)
+
+      const oldSales = await getSales()
+
+      const parseOldSales = oldSales.map((sale) => {
+        const item = {
+          id: sale.id,
+          product: sale.product,
+          roming: sale.roming,
+          syncronized: true
+
+        } as SaleInterface
+        return item
+      })
+      setSales(parseOldSales)
+    }
+  }
 
   useEffect(() => {
     (async () => {

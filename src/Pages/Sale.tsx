@@ -3,7 +3,7 @@ import { useContext, useState, useEffect } from "react";
 
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import { AppContext } from "../context/AppContext";
-import { GetByIdDB, InitDB } from '../service/DbLocalService';
+import { GetByIdDB, InitDB, InsertDB } from '../service/DbLocalService';
 import SaleInterface from '../interfaces/SaleInterface';
 
 export default function Sale({route, navigation}) {
@@ -67,10 +67,15 @@ export default function Sale({route, navigation}) {
       lng: location.coords.longitude
     }
     const response = await saveSale(payload)
+    console.log('data save', response)
     if(response) {
       alert('Venda salva com sucesso.')
-      navigation.navigate("Tabs")
+    } else {
+      db = await InitDB();
+      InsertDB(payload, db)
+      alert('Sua venda foi armazenada e será enviada quando a internet voltar.')
     }
+    navigation.navigate("Tabs", { reload : true})
 
   }
 

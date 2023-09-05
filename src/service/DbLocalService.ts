@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import SaleInterface from '../interfaces/SaleInterface';
 
 export async function InitDB() {
   const db = SQLite.openDatabase('db.salesDb');
@@ -28,9 +29,9 @@ export async function DropTable(db: SQLite.Database) {
   })
 }
 
-export async function InsertDB(db: SQLite.Database) {
+export async function InsertDB(sale: SaleInterface, db: SQLite.Database) {
   db.transaction(tx => {
-    tx.executeSql('INSERT INTO sales (product, amount, date, time) values (?, ?, ?, ?)', ['gibberish', 100, 'teste', 'teste'],
+    tx.executeSql('INSERT INTO sales (product, amount, date, time) values (?, ?, ?, ?)', [sale.product, sale.amount, sale.date, sale.time],
       (txObj, resultSet) => { console.log(resultSet)}
   )})
 }
