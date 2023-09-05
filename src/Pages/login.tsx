@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Logo from "../../assets/log2.png";
 import { Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { AppContext } from "../context/AppContext";
 
 export default function Login ({ navigation }) {
 
+    const { login } = useContext(AppContext)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const login = async () => {
-      console.log(email, password)
-      navigation.navigate("Tabs")
+    const sendData = async () => {
+      const response = await login(email, password)
+      if(response) {
+        navigation.navigate("Tabs")
+      }
     }
 
     return(
@@ -30,7 +34,7 @@ export default function Login ({ navigation }) {
             style={styles.input} secureTextEntry={true}
             onChangeText={(password) => setPassword(password)}
           />
-          <Button onPress={login} title="Entrar"/>
+          <Button onPress={() => {sendData()}} title="Entrar"/>
         </View>
       </View>
     )

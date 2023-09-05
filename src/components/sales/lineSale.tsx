@@ -3,10 +3,11 @@ import SaleInterface from "../../interfaces/SaleInterface";
 
 interface LineSalesInterface {
   navigation: any,
+  pending: boolean,
   sale: SaleInterface
 }
 
-export default function LineSale({navigation, sale} : LineSalesInterface) {
+export default function LineSale({navigation, pending, sale} : LineSalesInterface) {
 
   const showSale = (id) => {
     navigation.navigate('Sale', {id: id})
@@ -14,17 +15,17 @@ export default function LineSale({navigation, sale} : LineSalesInterface) {
 
   return (
     <TouchableOpacity onPress={() => { showSale(sale.id) }}>
-      <View style={styles.Line}>
-        <View style={styles.Id}>
+      <View style={pending ? {...styles.line, ...styles.pending }: styles.line }>
+        <View style={styles.id}>
           <Text>{sale.id}</Text>
         </View>
-        <View style={styles.Product}>
+        <View style={styles.product}>
           <Text>{sale.product}</Text>
         </View>
-        <View style={styles.Sync}>
+        <View style={styles.sync}>
           <Text>{sale.syncronized ? 'Sim' : 'Não'}</Text>
         </View>
-        <View style={styles.Roming}>
+        <View style={styles.roming}>
           <Text>{sale.roming ? 'Sim': "Não"}</Text>
         </View>
       </View>
@@ -33,7 +34,7 @@ export default function LineSale({navigation, sale} : LineSalesInterface) {
 }
 
 const styles = StyleSheet.create({
-  Line: {
+  line: {
     flexDirection: "row",
     padding: 10,
     borderColor: 'silver',
@@ -42,16 +43,19 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 2
   },
-  Id:{
+  id:{
     width: 30
   },
-  Product:{
+  product:{
     width: 120
   },
-  Sync: {
+  sync: {
     width: 90
   },
-  Roming: {
+  roming: {
     width: 90
+  },
+  pending:{
+    backgroundColor: 'yellow'
   }
 })

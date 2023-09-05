@@ -1,99 +1,120 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from "react-native";
+import React, { useContext, useEffect, useState } from 'react'
+import { Button, RootTagContext, ScrollView, StyleSheet, Text, View } from "react-native";
 import ListSales from '../components/sales/listSales';
 import SaleInterface from '../interfaces/SaleInterface';
 import * as Location from 'expo-location';
+import { GetDB, InitDB } from '../service/DbLocalService';
+import { AppContext } from '../context/AppContext';
 
 export default function Sales({navigation}) {
+  const { getSales } = useContext(AppContext)
+  const [sales, setSales] = useState<SaleInterface[]>([])
+  const [localSales, setLocalSales] = useState<SaleInterface[]>([])
+  let db
+  useEffect(() => {
+    const data = async() => {
+      db = await InitDB();
+      const salesDB = await GetDB(db);
 
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+      if(salesDB) {
+        const parseSales = salesDB.map((sale) => {
+          const item = {
+            id: 0,
+            product: sale.product,
+            roming: false,
+            syncronized: false
+
+          } as SaleInterface
+          return item
+        })
+        setLocalSales(parseSales)
+
+        const oldSales = await getSales()
+
+        const parseOldSales = oldSales.map((sale) => {
+          const item = {
+            id: sale.id,
+            product: sale.product,
+            roming: sale.roming,
+            syncronized: true
+
+          } as SaleInterface
+          return item
+        })
+        setSales(parseOldSales)
+      }
+    }
+    data()
+  },[])
 
   useEffect(() => {
     (async () => {
-
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
     })();
   }, []);
 
-  const sales: SaleInterface[] = [
-    {
-      id: 1,
-      product: 'teste',
-      syncronized: false,
-      roming: false
-    },
-    {
-      id: 2,
-      product: 'teste',
-      syncronized: false,
-      roming: false
-    },
-    {
-      id: 3,
-      product: 'teste',
-      syncronized: false,
-      roming: false
-    },
-    {
-      id: 4,
-      product: 'teste',
-      syncronized: false,
-      roming: false
-    },
-    {
-      id: 5,
-      product: 'teste',
-      syncronized: false,
-      roming: false
-    },
-  ]
   return(
     <View>
       <Text>Vendas</Text>
-      <View style={styles.Line}>
-      <View style={styles.Id}>
+      <View style={styles.line}>
+      <View style={styles.id}>
         <Text>#</Text>
       </View>
-      <View style={styles.Product}>
+      <View style={styles.product}>
         <Text>Produto</Text>
       </View>
-      <View style={styles.Sync}>
+      <View style={styles.sync}>
         <Text>Sincronizado</Text>
       </View>
-      <View style={styles.Roming}>
+      <View style={styles.roming}>
         <Text>Roming</Text>
       </View>
     </View>
-      <ListSales navigation={navigation} sales={sales} />
+      <ScrollView>
+        {localSales.length > 0 &&
+          <>
+            <Text style={styles.title}>Pendentes sincronização</Text>
+            <ListSales navigation={navigation} pending={true} sales={localSales} />
+          </>
+        }
+        {sales.length > 0 &&
+          <>
+            <Text style={styles.title}>Lançadas</Text>
+            <ListSales navigation={navigation} pending={false} sales={sales} />
+          </>
+        }
+      </ScrollView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  Line: {
+  line: {
     flexDirection: "row",
     padding: 10,
     margin: 10,
     backgroundColor: '#6198D8',
   },
-  Id:{
+  id:{
     width: 30,
   },
-  Product:{
+  product:{
     width: 120
   },
-  Sync: {
+  sync: {
     width: 90
   },
-  Roming: {
+  roming: {
     width: 90
-  }
+  },
+  title: {
+    fontWeight: 'bold',
+    padding: 10,
+    fontSize: 20,
+    marginLeft: 5
+  },
 })
