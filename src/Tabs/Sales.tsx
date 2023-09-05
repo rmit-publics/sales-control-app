@@ -94,7 +94,7 @@ export default function Sales({navigation}) {
 
   return(
     <View style={styles.container}>
-      <Text>Vendas</Text>
+      <Text style={styles.titlePage}>Vendas</Text>
       <TouchableOpacity
           activeOpacity={0.7}
           onPress={createSale}
@@ -148,6 +148,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     padding: 10,
+  },
+  titlePage: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
   line: {
     flexDirection: "row",

@@ -14,7 +14,7 @@ type AppContextType = {
   getSales: () => Promise <SaleInterface[]>
 }
 
-const urlApi = 'https://b454-187-94-15-254.ngrok.io/api'
+const urlApi = 'https://4e12-187-94-15-254.ngrok.io/api'
 
 export const AppContext = createContext<AppContextType>(null);
 
