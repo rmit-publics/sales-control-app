@@ -3,7 +3,7 @@ import { Button, RootTagContext, ScrollView, StyleSheet, Text, View } from "reac
 import ListSales from '../components/sales/listSales';
 import SaleInterface from '../interfaces/SaleInterface';
 import * as Location from 'expo-location';
-import { GetDB, InitDB } from '../service/DbLocalService';
+import { GetDB, InitDB, InsertDB } from '../service/DbLocalService';
 import { AppContext } from '../context/AppContext';
 
 export default function Sales({navigation}) {
@@ -15,11 +15,10 @@ export default function Sales({navigation}) {
     const data = async() => {
       db = await InitDB();
       const salesDB = await GetDB(db);
-
       if(salesDB) {
         const parseSales = salesDB.map((sale) => {
           const item = {
-            id: 0,
+            id: sale.id,
             product: sale.product,
             roming: false,
             syncronized: false

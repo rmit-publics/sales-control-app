@@ -10,7 +10,7 @@ interface LineSalesInterface {
 export default function LineSale({navigation, pending, sale} : LineSalesInterface) {
 
   const showSale = (id) => {
-    navigation.navigate('Sale', {id: id})
+    navigation.navigate('Sale', {id: id , pending})
   }
 
   return (

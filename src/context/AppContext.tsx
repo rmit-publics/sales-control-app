@@ -100,20 +100,19 @@ export const AppContextProvider = ( { children } : AppContextProps) => {
   }
 
   const getSale = async (saleId: number) : Promise<void | SaleInterface> => {
-    fetch(`${urlApi}/`,{
-      headers:{
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authentication: `Bearer ${token}`
-      }
+    const data = await fetch(`${urlApi}/sale/${saleId}`,{headers})
+    .then(response =>{
+      return response.json()
     })
-    .then(response => response.json())
     .then(json => {
-      return json.movies;
+      console.log('data api',json)
+      return json;
     })
     .catch(error => {
       console.error(error);
     });
+
+    return data
   }
 
   const saveSale = async (sale: SaleInterface) : Promise<void | boolean> => {
