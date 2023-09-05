@@ -1,10 +1,12 @@
 export default interface SaleInterface {
-  id: number,
+  id?: number,
   product: string,
   date: string,
   time: string,
   amount: number,
-  syncronized: boolean,
-  roming: boolean,
-  created_at: string
+  syncronized?: boolean,
+  roming?: boolean,
+  created_at?: string,
+  lat?: number,
+  lng?: number
 }

@@ -116,16 +116,24 @@ export const AppContextProvider = ( { children } : AppContextProps) => {
   }
 
   const saveSale = async (sale: SaleInterface) : Promise<void | boolean> => {
-    const data = await fetch(`${urlApi}/`, {
+    let formData = new FormData();
+    formData.append('product', sale.product);
+    formData.append('date', sale.date);
+    formData.append('time', sale.time);
+    formData.append('amount', sale.amount+'');
+    formData.append('lat', sale.lat+'');
+    formData.append('lng', sale.lng+'');
+    const data = await fetch(`${urlApi}/sale`, {
       method: 'POST',
-      headers:{
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authentication: `Bearer ${token}`
-      }
+      headers,
+      body: formData,
     })
-    .then(response => response.json())
+    .then(response =>{
+      console.log(response)
+      response.json()
+    })
     .then(json => {
+      console.log(json)
       return true
     })
     .catch(error => {

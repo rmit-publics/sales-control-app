@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, RootTagContext, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Button, Image, RootTagContext, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ListSales from '../components/sales/listSales';
 import SaleInterface from '../interfaces/SaleInterface';
 import * as Location from 'expo-location';
@@ -56,23 +56,43 @@ export default function Sales({navigation}) {
     })();
   }, []);
 
+  const clickHandler = () => {
+    navigation.navigate("Sale" ,{ id: undefined, pending: undefined})
+  };
+
   return(
-    <View>
+    <View style={styles.container}>
       <Text>Vendas</Text>
+      <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={clickHandler}
+          style={styles.touchableOpacityStyle}>
+          <Image
+            //We are making FAB using TouchableOpacity with an image
+            //We are using online image here
+            source={{
+              uri:
+                'https://raw.githubusercontent.com/AboutReact/sampleresource/master/plus_icon.png',
+            }}
+            //You can use you project image Example below
+            //source={require('./images/float-add-icon.png')}
+            style={styles.floatingButtonStyle}
+          />
+      </TouchableOpacity>
       <View style={styles.line}>
-      <View style={styles.id}>
-        <Text>#</Text>
+        <View style={styles.id}>
+          <Text>#</Text>
+        </View>
+        <View style={styles.product}>
+          <Text>Produto</Text>
+        </View>
+        <View style={styles.sync}>
+          <Text>Sincronizado</Text>
+        </View>
+        <View style={styles.roming}>
+          <Text>Roming</Text>
+        </View>
       </View>
-      <View style={styles.product}>
-        <Text>Produto</Text>
-      </View>
-      <View style={styles.sync}>
-        <Text>Sincronizado</Text>
-      </View>
-      <View style={styles.roming}>
-        <Text>Roming</Text>
-      </View>
-    </View>
       <ScrollView>
         {localSales.length > 0 &&
           <>
@@ -92,6 +112,11 @@ export default function Sales({navigation}) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 10,
+  },
   line: {
     flexDirection: "row",
     padding: 10,
@@ -116,4 +141,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 5
   },
+  touchableOpacityStyle: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,
+    zIndex: 100
+  },
+  floatingButtonStyle: {
+    resizeMode: 'contain',
+    width: 50,
+    height: 50,
+    //backgroundColor:'black'
+  }
 })

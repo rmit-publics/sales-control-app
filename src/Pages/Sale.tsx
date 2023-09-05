@@ -4,10 +4,11 @@ import { useContext, useState, useEffect } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import { AppContext } from "../context/AppContext";
 import { GetByIdDB, InitDB } from '../service/DbLocalService';
+import SaleInterface from '../interfaces/SaleInterface';
 
-export default function Sale({route}) {
+export default function Sale({route, navigation}) {
   const { id, pending } = route.params
-  const { getSale } = useContext(AppContext)
+  const { getSale, saveSale } = useContext(AppContext)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -42,17 +43,35 @@ export default function Sale({route}) {
       }
     }
 
-    if(pending) {
-      dataPending()
-    } else {
-      dataOld()
+    if(id) {
+      if(pending) {
+        dataPending()
+      } else {
+        dataOld()
+      }
     }
   },[])
 
   const save = async () => {
     let location = await Location.getCurrentPositionAsync({});
+    location.coords.latitude = 1;
+    location.coords.longitude = 1;
     setLocation(location);
-    console.log(product,value,date,time);
+    const amount  = Number(value)
+    const payload: SaleInterface = {
+      product,
+      amount,
+      date: date,
+      time: time,
+      lat: location.coords.latitude,
+      lng: location.coords.longitude
+    }
+    const response = await saveSale(payload)
+    if(response) {
+      alert('Venda salva com sucesso.')
+      navigation.navigate("Tabs")
+    }
+
   }
 
   return(
@@ -80,7 +99,7 @@ export default function Sale({route}) {
             <Text style={styles.pending}>Venda pendente de sincronização</Text>
           </View>
         }
-        {!pending &&
+        {!pending && id &&
           <View>
             <Text style={styles.sync}>Venda sincronizada em {cretead} </Text>
           </View>
