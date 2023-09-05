@@ -2,10 +2,10 @@ import * as SQLite from 'expo-sqlite';
 import SaleInterface from '../interfaces/SaleInterface';
 
 export async function InitDB() {
-  const db = SQLite.openDatabase('db.salesDb');
+  const db =  SQLite.openDatabase('db.salesDb');
   db.transaction(tx => {
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS sales (id INTEGER PRIMARY KEY AUTOINCREMENT, product TEXT, amount INT, date TEXT, time TEXT)'
+      'CREATE TABLE IF NOT EXISTS sales (id INTEGER PRIMARY KEY AUTOINCREMENT, product TEXT, amount INT, date TEXT, time TEXT, lat TEXT, lng TEXT)'
     )
   })
   return db
@@ -14,24 +14,24 @@ export async function InitDB() {
 export async function DropTable(db: SQLite.Database) {
   db.transaction(tx => {
     tx.executeSql(
-      'DROP TABLE sales;', [],
-      (tx, results) => {
-        if (results && results.rows && results.rows._array) {
-          /* do something with the items */
-          // results.rows._array holds all the results.
-          console.log(JSON.stringify(results.rows._array));
-          console.log('table dropped')
-        } else {
-          console.log('no results')
-        }
-      },
-    )
+      'DROP TABLE IF EXISTS sales;',
+      [], () => { console.log('entrou')},
+      (_tx, error) => {
+        console.log(error)
+      });
   })
 }
 
 export async function InsertDB(sale: SaleInterface, db: SQLite.Database) {
   db.transaction(tx => {
-    tx.executeSql('INSERT INTO sales (product, amount, date, time) values (?, ?, ?, ?)', [sale.product, sale.amount, sale.date, sale.time],
+    tx.executeSql('INSERT INTO sales (product, amount, date, time, lat, lng) values (?, ?, ?, ?, ?, ?)', [sale.product, sale.amount, sale.date, sale.time, sale.lat, sale.lng],
+      (txObj, resultSet) => { console.log(resultSet)}
+  )})
+}
+
+export async function DeleteDB(id: number, db: SQLite.Database) {
+  db.transaction(tx => {
+    tx.executeSql('DELETE FROM sales WHERE id = ?', [id],
       (txObj, resultSet) => { console.log(resultSet)}
   )})
 }

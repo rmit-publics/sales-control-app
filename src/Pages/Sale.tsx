@@ -67,7 +67,6 @@ export default function Sale({route, navigation}) {
       lng: location.coords.longitude
     }
     const response = await saveSale(payload)
-    console.log('data save', response)
     if(response) {
       alert('Venda salva com sucesso.')
     } else {

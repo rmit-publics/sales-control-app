@@ -2,12 +2,19 @@ import { useContext, useState } from "react";
 import Logo from "../../assets/log2.png";
 import { Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { AppContext } from "../context/AppContext";
+import { DropTable, InitDB } from "../service/DbLocalService";
 
 export default function Login ({ navigation }) {
 
     const { login } = useContext(AppContext)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const drop = async() => {
+      let db = await InitDB();
+      await DropTable(db)
+    }
+
+    // drop()
 
     const sendData = async () => {
       const response = await login(email, password)

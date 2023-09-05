@@ -4,11 +4,11 @@ import { Button, Image, RootTagContext, ScrollView, StyleSheet, Text, TouchableO
 import ListSales from '../components/sales/listSales';
 import SaleInterface from '../interfaces/SaleInterface';
 import * as Location from 'expo-location';
-import { GetDB, InitDB, InsertDB } from '../service/DbLocalService';
+import { DeleteDB, DropTable, GetDB, InitDB, InsertDB } from '../service/DbLocalService';
 import { AppContext } from '../context/AppContext';
 
 export default function Sales({navigation}) {
-  const { getSales } = useContext(AppContext)
+  const { getSales, saveSale } = useContext(AppContext)
   const [sales, setSales] = useState<SaleInterface[]>([])
   const [localSales, setLocalSales] = useState<SaleInterface[]>([])
   let db
@@ -18,10 +18,6 @@ export default function Sales({navigation}) {
       return () => null;
     }, [])
   );
-
-  useEffect(() => {
-    loadData()
-  },[])
 
   const loadData = async() => {
     db = await InitDB();
@@ -65,7 +61,34 @@ export default function Sales({navigation}) {
     })();
   }, []);
 
-  const clickHandler = () => {
+  setTimeout(async () => {
+    if(localSales.length > 0 ) {
+      let success = 0
+      const salesDB = await GetDB(db);
+      salesDB.forEach(async (sale : SaleInterface) => {
+        const payload : SaleInterface = {
+          product: sale.product,
+          amount: sale.amount,
+          date: sale.date,
+          time: sale.time,
+          lat: sale.lat,
+          lng: sale.lng
+        }
+        const save = await saveSale(payload)
+        if(save) {
+          console.log('deleta')
+          DeleteDB(sale.id, db)
+          success ++
+        }
+
+        if(success > 0) {
+          alert('Vendas sincronizadas com sucesso.')
+        }
+      });
+    }
+  }, 1000);
+
+  const createSale = () => {
     navigation.navigate("Sale" ,{ id: undefined, pending: undefined})
   };
 
@@ -74,7 +97,7 @@ export default function Sales({navigation}) {
       <Text>Vendas</Text>
       <TouchableOpacity
           activeOpacity={0.7}
-          onPress={clickHandler}
+          onPress={createSale}
           style={styles.touchableOpacityStyle}>
           <Image
             //We are making FAB using TouchableOpacity with an image
